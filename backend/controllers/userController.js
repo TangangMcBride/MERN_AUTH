@@ -7,8 +7,9 @@ import generateToken from "../utils/generateToken.js";
 //@access Public
 
 const authUser = asyncHandler(async (req, res) => {
+  //destructure req.body to email and password
   const { email, password } = req.body;
-
+  //find user by email
   const user = await User.findOne({ email });
 
   if (user && (await user.matchPassword(password))) {
@@ -74,11 +75,11 @@ const logoutUser = asyncHandler(async (req, res) => {
 //@access Private
 
 const getUserProfile = asyncHandler(async (req, res) => {
-  const user ={
+  const user = {
     _id: req.user._id,
     name: req.user.name,
     email: req.user.email,
-  }
+  };
 
   res.status(200).json(user);
 });
@@ -88,13 +89,13 @@ const getUserProfile = asyncHandler(async (req, res) => {
 //@access Private
 
 const updateUserProfile = asyncHandler(async (req, res) => {
-
+  //find user by user id
   const user = await User.findById(req.user._id);
 
-  if(user){
+  if (user) {
     user.name = req.body.name || user.name;
     user.email = req.body.email || user.email;
-    if(req.body.password){
+    if (req.body.password) {
       user.password = req.body.password;
     }
     const updatedUser = await user.save();
@@ -104,16 +105,30 @@ const updateUserProfile = asyncHandler(async (req, res) => {
       name: updatedUser.name,
       email: updatedUser.email,
     });
-
-  }else{
+  } else {
     res.status(404);
     throw new Error("User Not Found");
   }
 });
+
+// const forgetPassword = async (req, res) => {
+
+//   const { name, email, password } = req.body;
+
+//   const user = await User.findOne({email})
+//   // Logic for forget password
+// };
+
+// const resetPassword = async (req, res) => {
+//   // Logic for reset password
+// };
+
 export {
   authUser,
   registerUser,
   logoutUser,
   getUserProfile,
   updateUserProfile,
+  // forgetPassword,
+  // resetPassword,
 };

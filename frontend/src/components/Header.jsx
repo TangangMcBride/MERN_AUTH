@@ -32,7 +32,7 @@ const Header = () => {
       <Navbar bg="dark" variant="dark" expand="lg" collapseOnSelect>
         <Container>
           <Navbar.Brand as={Link} to="/">
-            MERN APP
+        MERN AUTHENTICATION
           </Navbar.Brand>
 
           <Navbar.Toggle aria-controls="basic-navbar-nav" />

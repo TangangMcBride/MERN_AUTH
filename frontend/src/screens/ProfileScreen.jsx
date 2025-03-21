@@ -33,14 +33,15 @@ const ProfileScreen = () => {
     } else {
       try {
         const res = await updateProfile({
+          _id: userInfo.id,
           name,
           email,
           password,
         }).unwrap();
         dispatch(setCredentials({ ...res }));
-        navigate("/");
-      } catch (error) {
-        toast.error(error?.data?.message || error.error);
+        toast.success('Profile updated')
+      } catch (err) {
+        toast.error(err?.data?.message || err.error);
       }
     }
   };
