@@ -1,11 +1,31 @@
 import { Navbar, Nav, Container, NavDropdown, Badge } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import { FaSignInAlt, FaSignOutAlt } from "react-icons/fa";
-
-import { Link } from "react-router-dom";
-
+import { Link, useNavigate } from "react-router-dom";
+import { logout } from "../slices/authSlice";
+import { useLogoutMutation } from "../slices/usersApiSlice";
 const Header = () => {
-  const {userInfo} = useSelector((state) => state.auth);
+  const { userInfo } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [logoutApi] = useLogoutMutation();
+
+  const logoutHandler = async () => {
+    try {
+      await logoutApi().unwrap();
+      dispatch(logout());
+      navigate("/");
+    } catch (error) {
+      console.error("Failed to logout:", error);
+    }
+  };
+  const profileHandler = async () => {
+    try {
+      await navigate("/profile");
+    } catch (error) {
+      console.error("Failed to logout:", error);
+    }
+  };
 
   return (
     <header>
@@ -22,9 +42,13 @@ const Header = () => {
                 <>
                   <NavDropdown title={userInfo.name} id="username">
                     <Nav.Link as={Link} to="/profile">
-                      <NavDropdown.Item>Profile</NavDropdown.Item>
+                      <NavDropdown.Item onClick={profileHandler}>
+                        Profile
+                      </NavDropdown.Item>
                     </Nav.Link>
-                    <NavDropdown.Item>Logout</NavDropdown.Item>
+                    <NavDropdown.Item onClick={logoutHandler}>
+                      Logout
+                    </NavDropdown.Item>
                   </NavDropdown>
                 </>
               ) : (
