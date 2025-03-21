@@ -2,13 +2,13 @@ import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import FormContainer from "../components/FormContainer";
-import { Form, Button, Row, Col } from "react-bootstrap";
-import { useRegisterMutation } from "../slices/usersApiSlice";
+import { Form, Button } from "react-bootstrap";
+import { useUpdateUserMutation } from "../slices/usersApiSlice";
 import Loader from "../components/Loader";
 import { toast } from "react-toastify";
 import { setCredentials } from "../slices/authSlice";
 
-const RegisterScreen = () => {
+const ProfileScreen = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -16,14 +16,15 @@ const RegisterScreen = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [register, { isLoading }] = useRegisterMutation();
+  const [updateProfile, { isLoading }] = useUpdateUserMutation();
   const { userInfo } = useSelector((state) => state.auth);
 
   useEffect(() => {
     if (userInfo) {
-      navigate("/");
+      setName(userInfo.name);
+      setEmail(userInfo.email);
     }
-  }, [userInfo, navigate]);
+  }, [userInfo.setName, userInfo.setEmail]);
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -31,7 +32,7 @@ const RegisterScreen = () => {
       toast.error("Passwords do not match");
     } else {
       try {
-        const res = await register({
+        const res = await updateProfile({
           name,
           email,
           password,
@@ -40,14 +41,13 @@ const RegisterScreen = () => {
         navigate("/");
       } catch (error) {
         toast.error(error?.data?.message || error.error);
-        
       }
     }
   };
 
   return (
     <FormContainer>
-      <h1>Register</h1>
+      <h1>Update Profile</h1>
 
       <Form onSubmit={submitHandler}>
         <Form.Group className="my-2" controlId="name">
@@ -90,17 +90,11 @@ const RegisterScreen = () => {
         </Form.Group>
         {isLoading && <Loader />}
         <Button type="submit" variant="primary" className="mt-3">
-          Sign Up
+          Update
         </Button>
       </Form>
-
-      <Row className="py-3">
-        <Col>
-          Already a Customer? <Link to={`/login`}>Sign in</Link>
-        </Col>
-      </Row>
     </FormContainer>
   );
 };
 
-export default RegisterScreen;
+export default ProfileScreen;
